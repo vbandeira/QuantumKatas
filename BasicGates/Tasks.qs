@@ -4,7 +4,7 @@
 namespace Quantum.Kata.BasicGates {
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Math;
-
+    open Microsoft.Quantum.Canon;
 
     //////////////////////////////////////////////////////////////////
     // Welcome!
@@ -51,7 +51,7 @@ namespace Quantum.Kata.BasicGates {
         // Type X(q);
         // Then rebuild the project and rerun the tests - T11_StateFlip_Test should now pass!
 
-        // ...
+        X(q);
     }
 
 
@@ -64,7 +64,7 @@ namespace Quantum.Kata.BasicGates {
     // Note:  |+⟩ and |-⟩ form a different basis for single-qubit states, called X basis.
     // |0⟩ and |1⟩ are called Z basis.
     operation BasisChange (q : Qubit) : Unit is Adj+Ctl {
-        // ...
+        H(q);
     }
 
 
@@ -72,7 +72,7 @@ namespace Quantum.Kata.BasicGates {
     // Input: A qubit in state |ψ⟩ = α |0⟩ + β |1⟩.
     // Goal:  Change the qubit state to α |0⟩ - β |1⟩ (flip the sign of |1⟩ component of the superposition).
     operation SignFlip (q : Qubit) : Unit is Adj+Ctl {
-        // ...
+        Z(q);
     }
 
 
@@ -87,7 +87,7 @@ namespace Quantum.Kata.BasicGates {
     // This is the first operation in this kata that is not self-adjoint, 
     // i.e., applying it for a second time does not return the qubit to the original state. 
     operation AmplitudeChange (alpha : Double, q : Qubit) : Unit is Adj+Ctl {
-        // ...
+        Ry(2.0 * alpha, q);
     }
 
 
@@ -95,7 +95,7 @@ namespace Quantum.Kata.BasicGates {
     // Input: A qubit in state |ψ⟩ = α |0⟩ + β |1⟩.
     // Goal:  Change the qubit state to α |0⟩ + iβ |1⟩ (flip the phase of |1⟩ component of the superposition).
     operation PhaseFlip (q : Qubit) : Unit is Adj+Ctl {
-        // ...
+        S(q);
     }
 
 
@@ -108,7 +108,7 @@ namespace Quantum.Kata.BasicGates {
     //        If the qubit is in state |1⟩, change its state to exp(i*alpha)|1⟩.
     //        If the qubit is in superposition, change its state according to the effect on basis vectors.
     operation PhaseChange (alpha : Double, q : Qubit) : Unit is Adj+Ctl {
-        // ...
+        R1(alpha, q);
     }
 
     // Task 1.7. Global phase change
@@ -122,7 +122,7 @@ namespace Quantum.Kata.BasicGates {
     // to observe the global phase it introduces. This is used 
     // in later katas as part of more complicated tasks.
     operation GlobalPhaseChange (q: Qubit) : Unit is Adj+Ctl {
-        // ...
+        R(PauliI, 2.0 * PI(), q);
     }
 
 
@@ -130,7 +130,7 @@ namespace Quantum.Kata.BasicGates {
     // Input: Two entangled qubits in Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2).
     // Goal:  Change the two-qubit state to |Φ⁻⟩ = (|00⟩ - |11⟩) / sqrt(2).
     operation BellStateChange1 (qs : Qubit[]) : Unit is Adj+Ctl {
-        // ...
+        Z(qs[0]);
     }
 
 
@@ -138,7 +138,7 @@ namespace Quantum.Kata.BasicGates {
     // Input: Two entangled qubits in Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2).
     // Goal:  Change the two-qubit state to |Ψ⁺⟩ = (|01⟩ + |10⟩) / sqrt(2).
     operation BellStateChange2 (qs : Qubit[]) : Unit is Adj+Ctl {
-        // ...
+        X(qs[0]);
     }
 
 
@@ -146,7 +146,8 @@ namespace Quantum.Kata.BasicGates {
     // Input: Two entangled qubits in Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2).
     // Goal:  Change the two-qubit state to |Ψ⁻⟩ = (|01⟩ - |10⟩) / sqrt(2).
     operation BellStateChange3 (qs : Qubit[]) : Unit is Adj+Ctl {
-        // ...
+        Z(qs[0]);
+        X(qs[1]);
     }
 
 
@@ -163,7 +164,7 @@ namespace Quantum.Kata.BasicGates {
     // the resulting two-qubit state can not be represented as a tensor product
     // of the states of individual qubits any longer; thus the qubits become entangled.
     operation TwoQubitGate1 (qs : Qubit[]) : Unit is Adj {
-        // ...
+        CNOT(qs[0], qs[1]);
     }
 
 
@@ -174,7 +175,8 @@ namespace Quantum.Kata.BasicGates {
     // Note that while the starting state can be represented as a tensor product of single-qubit states,
     // the resulting two-qubit state can not be represented in such a way.
     operation TwoQubitGate2 (qs : Qubit[]) : Unit is Adj {
-        // ...
+        // Controlled Z([qs[0]], qs[1]);
+        CZ(qs[0], qs[1]);
     }
 
 
@@ -186,7 +188,9 @@ namespace Quantum.Kata.BasicGates {
         // Hint: this task can be solved using one intrinsic gate;
         // as an exercise, try to express the solution using several
         // (possibly controlled) Pauli gates.
-        // ...
+        CNOT(qs[0], qs[1]);
+        CNOT(qs[1], qs[0]);
+        CNOT(qs[0], qs[1]);
     }
 
 
