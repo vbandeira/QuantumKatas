@@ -8,6 +8,7 @@ namespace Quantum.Kata.Superposition {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Math;
+    open Microsoft.Quantum.Arrays;
 
 
     //////////////////////////////////////////////////////////////////
@@ -86,7 +87,16 @@ namespace Quantum.Kata.Superposition {
         EqualityFactI(Length(qs), 2, "The array should have exactly 2 qubits.");
 
         // Hint: Is this state separable?
-        // ...
+        // Sim, o estado ((|0⟩ - |1⟩) / sqrt(2)) ⊗ ((|0⟩ + i*|1⟩) / sqrt(2)) é similar ao desejado.
+        // Então temos |-⟩ no primeiro termo e |i⟩ no segundo
+
+        // Primeiro termo
+        H(qs[0]);
+        Z(qs[0]);
+
+        // Segundo termo
+        H(qs[1]);
+        S(qs[1]);
     }
 
 
@@ -94,7 +104,8 @@ namespace Quantum.Kata.Superposition {
     // Input: two qubits in |00⟩ state (stored in an array of length 2).
     // Goal: create a Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2) on these qubits.
     operation BellState (qs : Qubit[]) : Unit {
-        // ...
+        H(qs[0]);
+        CNOT(qs[0], qs[1]);
     }
 
 
@@ -108,7 +119,27 @@ namespace Quantum.Kata.Superposition {
     //       2: |Ψ⁺⟩ = (|01⟩ + |10⟩) / sqrt(2)
     //       3: |Ψ⁻⟩ = (|01⟩ - |10⟩) / sqrt(2)
     operation AllBellStates (qs : Qubit[], index : Int) : Unit {
-        // ...
+        H(qs[0]);
+        if (index == 0) {
+            CNOT(qs[0], qs[1]);
+        }
+
+        if (index == 1) {
+            CNOT(qs[0], qs[1]);
+            Z(qs[0]);
+        }
+
+        if (index == 2) {
+            CNOT(qs[0], qs[1]);
+            X(qs[1]);
+        }
+
+        if (index == 3) {
+            CNOT(qs[0], qs[1]);
+            Z(qs[0]);
+            X(qs[1]);
+        }
+
     }
 
 
@@ -118,7 +149,10 @@ namespace Quantum.Kata.Superposition {
     operation GHZ_State (qs : Qubit[]) : Unit {
         // Hint: N can be found as Length(qs).
 
-        // ...
+        H(qs[0]);
+        for (q in Rest(qs)) {
+            CNOT(qs[0], q);
+        }
     }
 
 
@@ -127,7 +161,9 @@ namespace Quantum.Kata.Superposition {
     // Goal: create an equal superposition of all basis vectors from |0...0⟩ to |1...1⟩
     // (i.e. state (|0...0⟩ + ... + |1...1⟩) / sqrt(2^N) ).
     operation AllBasisVectorsSuperposition (qs : Qubit[]) : Unit {
-        // ...
+        for (q in qs) {
+            H(q);
+        }
     }
 
 
@@ -144,7 +180,16 @@ namespace Quantum.Kata.Superposition {
     // Example: for N = 2 and isEven = true the required state is (|00⟩ + |10⟩) / sqrt(2), 
     //      and for N = 2 and isEven = false - (|01⟩ + |11⟩) / sqrt(2).
     operation EvenOddNumbersSuperposition (qs : Qubit[], isEven : Bool) : Unit {
-        // ...
+        mutable N = Length(qs);
+
+        for (i in 0..N-2) {
+            H(qs[i]);
+        }
+
+        // Para números ímpares, inverter o último qubit para 1
+        if (not isEven) {
+            X(qs[N-1]);
+        }
     }
 
 
