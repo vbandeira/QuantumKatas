@@ -36,7 +36,7 @@ namespace Quantum.Kata.Superposition {
         // Type the following: H(q);
         // Then rebuild the project and rerun the tests - T01_PlusState_Test should now pass!
 
-        // ...
+        H(q);
     }
 
 
@@ -46,7 +46,8 @@ namespace Quantum.Kata.Superposition {
     operation MinusState (q : Qubit) : Unit {
         // In this task, as well as in all subsequent ones, you have to come up with the solution yourself.
 
-        // ...
+        X(q);
+        H(q);
     }
 
 
@@ -59,7 +60,7 @@ namespace Quantum.Kata.Superposition {
         // Hint: Experiment with rotation gates from the Microsoft.Quantum.Intrinsic namespace.
         // Note that all rotation operators rotate the state by _half_ of its angle argument.
 
-        // ...
+        Ry(2.0 * alpha, q);
     }
 
 

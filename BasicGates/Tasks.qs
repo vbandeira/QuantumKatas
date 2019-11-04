@@ -201,7 +201,8 @@ namespace Quantum.Kata.BasicGates {
     //        i.e., change the three-qubit state to
     //        α|000⟩ + β|001⟩ + γ|010⟩ + δ|011⟩ + ε|100⟩ + ζ|101⟩ + θ|110⟩ + η|111⟩.
     operation ToffoliGate (qs : Qubit[]) : Unit is Adj {
-        // ...
+        CCNOT(qs[0], qs[1], qs[2]);
+        // ou (Controlled X)(qs[0..1], qs[2]);
     }
 
 
@@ -211,7 +212,7 @@ namespace Quantum.Kata.BasicGates {
     // Goal:  Swap the states of second and third qubit if and only if the state of the first qubit is |1⟩:
     //        α|000⟩ + β|001⟩ + γ|010⟩ + δ|011⟩ + ε|100⟩ + η|101⟩ + ζ|110⟩ + θ|111⟩.
     operation FredkinGate (qs : Qubit[]) : Unit is Adj {
-        // ...
+        Controlled SWAP([qs[0]], (qs[1], qs[2]));
     }
 
 }
