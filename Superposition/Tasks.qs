@@ -72,7 +72,8 @@ namespace Quantum.Kata.Superposition {
         // You don't need to modify them. Feel free to remove them, this won't cause your code to fail.
         EqualityFactI(Length(qs), 2, "The array should have exactly 2 qubits.");
 
-        // ...
+        H(qs[0]);
+        H(qs[1]);
     }
 
 
