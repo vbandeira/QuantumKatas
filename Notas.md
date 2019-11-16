@@ -7,4 +7,6 @@
 
 
 ## Links
-[https://docs.microsoft.com/pt-br/qsharp/api/qsharp/microsoft.quantum.intrinsic.ry?view=qsharp-preview](https://docs.microsoft.com/pt-br/qsharp/api/qsharp/microsoft.quantum.intrinsic.ry?view=qsharp-preview)
+[API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
+
+[Quantum Gates and Circuits: The Crash Course](https://blogs.msdn.microsoft.com/uk_faculty_connection/2018/02/26/quantum-gates-and-circuits-the-crash-course/)

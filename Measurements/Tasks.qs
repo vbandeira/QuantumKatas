@@ -44,7 +44,7 @@ namespace Quantum.Kata.Measurements {
         // Replace the returned expression with (M(q) == One).
         // Then rebuild the project and rerun the tests - T101_IsQubitOne_Test should now pass!
 
-        return false;
+        return M(q) == One;
     }
 
 
@@ -52,7 +52,9 @@ namespace Quantum.Kata.Measurements {
     // Input: a qubit in an arbitrary state.
     // Goal:  change the state of the qubit to |0⟩.
     operation InitializeQubit (q : Qubit) : Unit {
-        // ...
+        if (M(q) == One) {
+            X(q);
+        }
     }
 
 
@@ -62,8 +64,9 @@ namespace Quantum.Kata.Measurements {
     // Output: true if the qubit was in the |+⟩ state, or false if it was in the |-⟩ state.
     // The state of the qubit at the end of the operation does not matter.
     operation IsQubitPlus (q : Qubit) : Bool {
-        // ...
-        return false;
+        // Desfaz a superposição
+        H(q);
+        return M(q) == Zero;
     }
 
 
@@ -76,8 +79,10 @@ namespace Quantum.Kata.Measurements {
     // Output: true if the qubit was in the |A⟩ state, or false if it was in the |B⟩ state.
     // The state of the qubit at the end of the operation does not matter.
     operation IsQubitA (alpha : Double, q : Qubit) : Bool {
-        // ...
-        return false;
+        // Invertemos a rotação para que |A⟩ vire |0⟩ e |B⟩ vire |1⟩
+        Ry(-2.0 * alpha, q);
+
+        return M(q) == Zero;
     }
 
 
@@ -87,8 +92,13 @@ namespace Quantum.Kata.Measurements {
     //         1 if they were in |11⟩ state.
     // The state of the qubits at the end of the operation does not matter.
     operation ZeroZeroOrOneOne (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        if (M(qs[0]) == Zero) {
+            return 0;
+        } else {
+            return 1;
+        }
+
+        // return M(qs[0]) == Zero ? 0 | 1;
     }
 
 
@@ -104,8 +114,12 @@ namespace Quantum.Kata.Measurements {
     // (i.e., |10⟩ state corresponds to qs[0] in state |1⟩ and qs[1] in state |0⟩).
     // The state of the qubits at the end of the operation does not matter.
     operation BasisStateMeasurement (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        // return (M(qs[0]) == Zero ? 0 | 2) + (M(qs[1]) == Zero ? 0 | 1);
+
+        let m1 = M(qs[0]) == Zero ? 0 | 1;
+        let m2 = M(qs[1]) == Zero ? 0 | 1;
+
+        return m1 * 2 + m2;
     }
 
 
@@ -123,9 +137,29 @@ namespace Quantum.Kata.Measurements {
     // You can use exactly one measurement.
     // Example: for bit strings [false, true, false] and [false, false, true]
     //          return 0 corresponds to state |010⟩, and return 1 corresponds to state |001⟩.
-    operation TwoBitstringsMeasurement (qs : Qubit[], bits1 : Bool[], bits2 : Bool[]) : Int {
-        // ...
+    
+    // Solução:
+    // 1. Encontrar a diferença entre os vetores. Caso não haja diferença, o resultado não importa.
+    // 2. Efetua a medição do Qubit no índice da diferença.
+    // 3. Compara o resultado da medição com o valor dos vetores de bool.
+
+
+    // Função auxiliar para buscar a diferença entre os vetores de bool
+    operation FindFirstDiff(bits1: Bool[], bits2: Bool[]): Int {
+        for (i in 0 .. Length(bits1) - 1) {
+            if (bits1[i] != bits2[i]) {
+                return i;
+            }
+        }
+
         return -1;
+    }
+
+    operation TwoBitstringsMeasurement (qs : Qubit[], bits1 : Bool[], bits2 : Bool[]) : Int {
+        // Encontra a diferença entre os arrays de boolean e opera em cima apenas desse qubit
+        let firstDiff = FindFirstDiff(bits1, bits2);
+        let res  = M(qs[firstDiff]) == One;
+        return res == bits1[firstDiff] ? 0 | 1;
     }
 
 
@@ -155,9 +189,42 @@ namespace Quantum.Kata.Measurements {
     //          return 0 corresponds to state (|010⟩ + |011⟩) / sqrt(2), 
     //          return 1 corresponds to state (|101⟩ + |001⟩) / sqrt(2),
     //          and you can distinguish these states perfectly by measuring the second qubit.
-    operation SuperpositionOneMeasurement (qs : Qubit[], bits1 : Bool[][], bits2 : Bool[][]) : Int {
-        // ...
+    operation FindFirstSuperpositionDiff(bits1: Bool[][], bits2: Bool[][], NQubits: Int): Int {
+        for (i in 0..NQubits - 1) {
+            // Conta o número de 1's no índice i nos bit strings de ambos os vetores
+
+            mutable val1 = 0;
+            mutable val2 = 0;
+
+            for (j in 0 .. Length(bits1) - 1) {
+                if (bits1[j][i]) {
+                    set val1 += 1;
+                }
+            }
+
+            for (k in 0 .. Length(bits2) - 1) {
+                if (bits2[k][i]) {
+                    set val2 += 1;
+                }
+            }
+
+            if ((val1 == Length(bits1) and val2 == 0) or (val1 == 0 and val2 == Length(bits2))) {
+                return i;
+            }
+        }
         return -1;
+    }
+
+    operation SuperpositionOneMeasurement (qs : Qubit[], bits1 : Bool[][], bits2 : Bool[][]) : Int {
+        // Encontra o índice onde os vetores divergem
+        let diff = FindFirstSuperpositionDiff(bits1, bits2, Length(qs));
+        let res = ResultAsBool(M(qs[diff]));
+
+        if (res == bits1[0][diff]) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
 
