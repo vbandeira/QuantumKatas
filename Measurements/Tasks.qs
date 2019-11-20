@@ -8,6 +8,7 @@ namespace Quantum.Kata.Measurements {
     open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Math;
     open Microsoft.Quantum.Arrays;
+    open Microsoft.Quantum.Measurement;
 
 
     //////////////////////////////////////////////////////////////////
@@ -246,9 +247,34 @@ namespace Quantum.Kata.Measurements {
     // Example: for arrays [[false, true, false], [false, false, true]] and [[true, true, true], [false, true, true]]
     //          return 0 corresponds to state (|010⟩ + |001⟩) / sqrt(2), 
     //          return 1 corresponds to state (|111⟩ + |011⟩) / sqrt(2)
+    function BitstringsAreEqual (bits1 : Bool[], bits2 : Bool[]) : Bool {
+        for (i in 0.. Length(bits1) - 1) {
+            if (bits1[i] != bits2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     operation SuperpositionMeasurement (qs : Qubit[], bits1 : Bool[][], bits2 : Bool[][]) : Int {
-        // ...
-        return -1;
+        // Mede todos os qubits e compara com os bitstrings
+        let measure = ResultArrayAsBoolArray(MultiM(qs));
+        for (i in 0 .. Length(bits1) - 1) {
+            if (BitstringsAreEqual(bits1[i],measure)) {
+                return 0;
+            }
+        }
+        return 1;
+
+        // Implementação alternativa usando funções internas, porém mais cara
+        // measure all qubits and, treating the result as an integer, check whether it can be found in one of the bit arrays
+        // let measuredState = ResultArrayAsInt(MultiM(qs));
+        // for (s in bits1) {
+        //     if (BoolArrayAsInt(s) == measuredState) {
+        //         return 0;
+        //     }
+        // }
+        // return 1;
     }
 
 
@@ -260,8 +286,22 @@ namespace Quantum.Kata.Measurements {
     //         1 if they were in the W state.
     // The state of the qubits at the end of the operation does not matter.
     operation AllZerosOrWState (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        let result = ResultArrayAsBoolArray(MultiM(qs));
+        mutable onesCount = 0;
+        for (i in 0..Length(result)-1) {
+            if (result[i]) {
+                set onesCount += 1;
+            }
+        }
+        
+        if (onesCount > 1) {
+            fail "Estado inicial inválido. Impossível ter estado W com mais de um valor 1.";
+        }
+
+        return onesCount == 0 ? 0 | 1;
+
+        // Alternativa:
+        // return ResultArrayAsInt(MultiM(qs)) == 0 ? 0 | 1;
     }
 
 
@@ -273,8 +313,25 @@ namespace Quantum.Kata.Measurements {
     //         1 if they were in the W state.
     // The state of the qubits at the end of the operation does not matter.
     operation GHZOrWState (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        let result = ResultArrayAsBoolArray(MultiM(qs));
+        mutable onesCount = 0;
+        for (i in 0..Length(result)-1) {
+            if (result[i]) {
+                set onesCount += 1;
+            }
+        }
+        
+        if (onesCount > 1 and onesCount < Length(qs)) {
+            fail "Estado inicial inválido. Impossível ter estado W com mais de um valor 1 ou estado GHZ.";
+        }
+
+        return onesCount == 1 ? 1 | 0;
+
+        // Alternativa:
+        // measure all qubits and convert the measurement results into an integer;
+        // measuring GHZ state will produce either a 0...0 result or a 1...1 result, which correspond to integers 0 and 2ᴺ-1, respectively
+        // let m = ResultArrayAsInt(MultiM(qs));
+        // return (m == 0 or m == (1 <<< Length(qs))-1) ? 0 | 1;
     }
 
 
@@ -292,8 +349,14 @@ namespace Quantum.Kata.Measurements {
     operation BellState (qs : Qubit[]) : Int {
         // Hint: you need to use 2-qubit gates to solve this task
 
-        // ...
-        return -1;
+        // Desfazemos o estado Bell
+        CNOT(qs[0], qs[1]);
+        H(qs[0]);
+
+        let measure1 = M(qs[0]) == Zero ? 0 | 1;
+        let measure2 = M(qs[1]) == Zero ? 0 | 1;
+
+        return measure2 * 2 + measure1;
     }
 
 
@@ -309,8 +372,12 @@ namespace Quantum.Kata.Measurements {
     //         3 if they were in |S3⟩ state.
     // The state of the qubits at the end of the operation does not matter.
     operation TwoQubitState (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        // Os estados foram gerados a partir de H ⊗ H aplicado nos quatro estados base
+        // Para medi-los, aplicamos H ⊗ H seguido da medição de estado base que definimos anteriormente na tarefa 1.6
+
+        H(qs[0]);
+        H(qs[1]);
+        return BasisStateMeasurement(qs);
     }
 
 
@@ -326,8 +393,17 @@ namespace Quantum.Kata.Measurements {
     //         3 if they were in |S3⟩ state.
     // The state of the qubits at the end of the operation does not matter.
     operation TwoQubitStatePartTwo (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        // Explicação nas notas
+
+        H(qs[1]);
+
+        CNOT(qs[0], qs[1]);
+        H(qs[0]);
+
+        let measure1 = M(qs[0]) == One ? 0 | 1;
+        let measure2 = M(qs[1]) == One ? 0 | 1;
+
+        return measure2 * 2 + measure1;
     }
 
 
@@ -341,8 +417,55 @@ namespace Quantum.Kata.Measurements {
     //         1 if they were in the second superposition.
     // The state of the qubits at the end of the operation does not matter.
     operation ThreeQubitMeasurement (qs : Qubit[]) : Int {
-        // ...
-        return -1;
+        // We first apply a unitary operation to the input state so that it maps the first state
+        // to the W-state (see Task 10 in the "Superposition" kata) 1/sqrt(3) ( |100⟩ + |010⟩ + |001⟩ ).
+        // This can be accomplished by a tensor product of the form I₂ ⊗ R ⊗ R², where
+        //  - I₂ denotes the 2x2 identity matrix which is applied to qubit 0,
+        //  - R is the diagonal matrix diag(1, ω^-1) = diag(1, ω²) which is applied to qubit 1,
+        //  - R² = diag(1, ω) which is applied to qubit 2.
+        // Note that upon applying the operator I₂ ⊗ R ⊗ R²,
+        // the second state gets then mapped to 1/sqrt(3) ( |100⟩ + ω |010⟩ + ω² |001⟩ ).
+        //
+        // We can now perfectly distinguish these two states by invoking the inverse of the state prep
+        // routine for W-states (as in Task 10 of "Superposition") which will map the first state to the
+        // state |000⟩ and the second state to some state which is guaranteed to be perpendicular to
+        // the state |000⟩, i.e., the second state gets mapped to a superposition that does not involve
+        // |000⟩. Now, the two states can be perfectly distinguished (while leaving them intact) by
+        // attaching an ancilla qubit, computing the OR function of the three bits (which can be
+        // accomplished using a multiply-controlled X gate with inverted inputs) and measuring said
+        // ancilla qubit.
+        mutable result = 0;
+
+        // rotate qubit 1 by angle - 2π/3 around z-axis
+        Rz((4.0 * PI()) / 3.0, qs[1]);
+
+        // rotate qubit 2 by angle - 4π/3 around z-axis
+        Rz((8.0 * PI()) / 3.0, qs[2]);
+
+        // Apply inverse state prep of 1/sqrt(3) ( |100⟩ + |010⟩ + |001⟩ )
+        Adjoint WState_Arbitrary_Reference(qs);
+
+        // need one qubit to store result of comparison "000" vs "not 000"
+        using (anc = Qubit()) {
+            // compute the OR function into anc
+            (ControlledOnInt(0, X))(qs, anc);
+            set result = MResetZ(anc) == One ? 0 | 1;
+        }
+
+        // Fix up the state so that it is identical to the input state
+        // (this is not required if the state of the qubits after the operation does not matter)
+
+        // Apply state prep of 1/sqrt(3) ( |100⟩ + |010⟩ + |001⟩ )
+        WState_Arbitrary_Reference(qs);
+
+        // rotate qubit 1 by angle 2π/3 around z-axis
+        Rz((-4.0 * PI()) / 3.0, qs[1]);
+
+        // rotate qubit 2 by angle 4π/3 around z-axis
+        Rz((-8.0 * PI()) / 3.0, qs[2]);
+
+        // finally, we return the result
+        return result;
     }
 
 
