@@ -486,8 +486,8 @@ namespace Quantum.Kata.Measurements {
     // The state of the qubit at the end of the operation does not matter.
     // Note: in this task you have to get accuracy of at least 80%.
     operation IsQubitPlusOrZero (q : Qubit) : Bool {
-        // ...
-        return true;
+        Ry(0.25 * PI(), q);
+        return M(q) == Zero;
     }
 
 
@@ -506,8 +506,18 @@ namespace Quantum.Kata.Measurements {
     // The state of the qubit at the end of the operation does not matter.
     // You are allowed to use ancilla qubit(s).
     operation IsQubitPlusZeroOrInconclusiveSimpleUSD (q : Qubit) : Int {
-        // ...
-        return -2;
+        let basis = RandomInt(2);
+
+        if (basis == 0) {
+            // Base computacional
+            let result = M(q);
+            return result == One ? 1 | -1;
+        } else {
+            // Base Hadamard
+            H(q);
+            let result = M(q);
+            return result == One ? 0 | -1;
+        }
     }
 
 
@@ -525,7 +535,35 @@ namespace Quantum.Kata.Measurements {
     // Note: in this task you have to succeed with probability 1, i.e., you are never allowed
     //       to give an incorrect answer.
     operation IsQubitNotInABC (q : Qubit) : Int {
-        // ...
-        return -1;
+        let alpha = ArcCos(Sqrt(2.0 / 3.0));
+
+        using (a = Qubit()) {
+            Z(q);
+            CNOT(a, q);
+            Controlled H([q], a);
+            S(a);
+            X(q);
+
+            (ControlledOnInt(0, Ry))([a], (-2.0 * alpha, q));
+            CNOT(a,q);
+            Controlled H([q], a);
+            CNOT(a,q);
+
+            // Medimos na base computacional
+            let res0 = MResetZ(a);
+            let res1 = M(q);
+
+            // Tratamos os casos para saída
+            if (res0 == Zero and res1 == Zero) {
+                return 0;
+            } elif (res0 == One and res1 == Zero) {
+                return 1;
+            } elif (res0 == Zero and res1 == One) {
+                return 2;
+            } else {
+                // Não deveria ocorrer nunca
+                return 3;
+            }
+        }
     }
 }

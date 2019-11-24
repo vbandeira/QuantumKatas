@@ -10,13 +10,53 @@
     - Menor estado: $\lvert GHZ \rangle = \frac {\lvert 000 \rangle + \lvert 111 \rangle} {\sqrt{2}}$
 - O estado Bell pode assumir quatro valores:
     
-    1. $\lvert \phi^+ \rangle = \frac {\bigl( \lvert 00 \rangle + \lvert 11 \rangle \bigr)} {\sqrt{2}}$
-    1. $\lvert \phi^- \rangle = \frac {\bigl( \lvert 00 \rangle - \lvert 11 \rangle \bigr)} {\sqrt{2}}$
-    1. $\lvert \Psi^+ \rangle = \frac {\bigl( \lvert 01 \rangle + \lvert 10 \rangle \bigr)} {\sqrt{2}}$
-    1. $\lvert \Psi^+ \rangle = \frac {\bigl( \lvert 01 \rangle - \lvert 10 \rangle \bigr)} {\sqrt{2}}$
+    1. $\lvert \phi^+ \rangle = \frac {\Bigl( \lvert 00 \rangle + \lvert 11 \rangle \Bigr)} {\sqrt{2}}$
+    1. $\lvert \phi^- \rangle = \frac {\Bigl( \lvert 00 \rangle - \lvert 11 \rangle \Bigr)} {\sqrt{2}}$
+    1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle + \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
+    1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle - \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
 
-- Tarefa 1.14:
-    - Aplicamos ```H(qs[1])``` para que cada uma das entradas seja convertida para um dos estados Bell citados acima.
+## Katas
+
+### Measurement
+
+#### Tarefa 1.14:
+
+- Aplicamos ```H(qs[1])``` para que cada uma das entradas seja convertida para um dos estados Bell citados acima.
+
+#### Tarefa 2.1:
+- Dados os estados {$E_a$, $E_b$} com dois resultados $a$ e $b$, que identificamos como as respostas, ou seja, "$a$" =  $\lvert0\rangle$" e "$b$"= $\lvert + \rangle$".
+- Definimos que:
+    - $P(a|0) =$ Probabilidade de observar no primeiro resultado que o estado era $\lvert 0 \rangle$
+    - $P(b|0) =$ Probabilidade de observar no segundo resultado que o estado era $\lvert 0 \rangle$
+    - $P(a|+) =$ Probabilidade de observar no primeiro resultado que o estado era $\lvert + \rangle$
+    - $P(b|+) =$ Probabilidade de observar no segundo resultado que o estado era $\lvert + \rangle$
+- A tarefa é maximizar a probabilidade de estar correto com uma medição única.
+- Assumindo a uniformidade anterior, ou seja, $P(+) = P(0) = \frac 1 2$, nós temos $P_{acerto} = P(0) \times P(a|0) + P(+) \times P(b|+) = \frac 1 2 \times \Bigl( P(a|0) + P(b|+) \Bigr)$.
+- Assumindo uma medição na forma [von Neumann](https://en.wikipedia.org/wiki/Measurement_in_quantum_mechanics#von_Neumann_measurement_scheme) temos:
+    - $E_a = Ry(2.0 * \alpha) * (1,0) = \Bigl(\cos(\alpha), \sin(\alpha)\Bigr)$
+    - $E_b = Ry(2.0 * \alpha) * (0,1) = \Bigl(\sin(\alpha), -\cos(\alpha)\Bigr)$
+- Com isso temos:
+    - $P(a|0) = \Bigl| \langle E_a | 0 \rangle \Bigl|^2 = \cos^2(\alpha)$
+    - $P(b|+) = \Bigl| \langle E_b | + \rangle \Bigl|^2 = \frac 1 2 + \cos(\alpha) \times \sin(\alpha)$
+    - $P_{acerto} = \frac 1 2 \times \Bigl( \frac 1 2 + \cos^2(\alpha) + \cos(\alpha) \times \sin(\alpha) \Bigr)$
+- Maximizando isso para $\alpha$, temos o máximo de $P_{sucesso} = \frac 1 2 \Bigl(1 + \frac 1 {\sqrt{2}} \Bigr) = 0.8535...$, que é obtido por $\alpha = \frac \pi 8$ 
+- Precisamos rotacionar o estado inicial por $\frac \pi 8$ para aplicar ```Ry```com um ângulo de $\frac {2\pi} 8$
+
+#### Tarefa 2.2:
+- A estratégia mais simples que resulta em "inconclusivo" com uma precisão de 75% e nunca erra nos cenários conclusivos, é escolher aleatoriamente a base de medição entre computacional (std) e Hadamard (had), resultando na tabela verdade abaixo:
+
+| Estado | Base | Output 0 | Output 1 | Output -1 |
+|---|---|---|---|---|
+| $\lvert 0 \rangle$ | std | 0 | 0 | 1 |
+| $\lvert + \rangle$ | std | 0 | $\frac 1 2$ | $\frac 1 2$ |
+| $\lvert 0 \rangle$ | had | $\frac 1 2$ | 0 | $\frac 1 2$ |
+| $\lvert + \rangle$ | had | 0 | 0 | 1 |
+
+#### Tarefa 2.3:
+- A chave é a observação de que [POVM](https://pt.wikipedia.org/wiki/Medida_com_operador_positivo_valorizado) com elementos de primeiro rank $\{ E_0, E_1, E_2\}$ resolverá o problema, onde $E_k = \lvert \psi_k \rangle \langle \psi_k \rvert$ e $\lvert \psi_k \rangle = \frac 1 {\sqrt{2}} \Bigl( \lvert 0 \rangle-w^k \lvert 1 \rangle \Bigr)$ e onte $k =0, 1, 2$. O resto da tarefa é encontrar uma medição von Neumann que implementa a chamada POVM através de um circuito quântico.
+- Para obter tal circuito quântico, observamos que precisamos de uma extensão unitária da matriz formada por $A = \Big( \psi_0, \psi_1, \psi_2\Bigr)$. No geral, podemos usar Decomposição de Valores Simples (Singular Value Decomposition, SVD), mas aqui podemos aplicar um atalho:
+ - A matriz $A$ pode ser extendida (até $\pm 1$ na diagonal) para uma matriz Transformação de Fourier Discreta 3x3, com uma dimensão extra (um bloco de 1x1 no qual temos liberdade de fase), obtemos uma unidade 4x4.
+ - Usando o "Rader trick" podemos agora decompor em bloco o 3x3 DFT e obter dois blocos 2x2 nos quais podemos implementar gates controlados de qubits únicos
 
 ## Links
 [API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
