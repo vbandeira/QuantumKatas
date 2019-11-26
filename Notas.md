@@ -58,6 +58,17 @@
  - A matriz $A$ pode ser extendida (até $\pm 1$ na diagonal) para uma matriz Transformação de Fourier Discreta 3x3, com uma dimensão extra (um bloco de 1x1 no qual temos liberdade de fase), obtemos uma unidade 4x4.
  - Usando o "Rader trick" podemos agora decompor em bloco o 3x3 DFT e obter dois blocos 2x2 nos quais podemos implementar gates controlados de qubits únicos
 
+### Joint Measure
+
+#### Tarefa 3
+- Precisamos compara apenas o segundo e o terceiro qubit para diferenciar os estados GHZ ou GHZ com X
+- A paridade desses qubits para o primeiro estado (GHZ) é 0, então seu estado pertence ao eigenspace +1 do operador $Z \otimes Z$.
+- No outro estado (GHZ com X), a paridade é 1, logo seu estado pertence ao eigenspace -1
+
+#### Tarefa 5
+- No primeiro estado temos uma superposição $\lvert++\rangle$ e $\lvert--\rangle$ que pertence ao estado +1 do eigenspace do operador $X \otimes X$;
+- O segundo estado é uma superposição $\lvert +- \rangle$ e $\lvert -+ \rangle$ que pertence ao  eigenspace -1 do mesmo operador;
+
 ## Links
 [API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
 
