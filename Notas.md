@@ -15,6 +15,20 @@
     1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle + \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
     1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle - \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
 
+## Gates
+
+### X
+
+$\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$
+
+### Y
+
+$\begin{bmatrix} 0 & -i \\ i & 0 \end{bmatrix}$
+
+### Z
+
+$\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$
+
 ## Katas
 
 ### Measurement
