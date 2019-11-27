@@ -14,6 +14,13 @@
     1. $\lvert \phi^- \rangle = \frac {\Bigl( \lvert 00 \rangle - \lvert 11 \rangle \Bigr)} {\sqrt{2}}$
     1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle + \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
     1. $\lvert \Psi^+ \rangle = \frac {\Bigl( \lvert 01 \rangle - \lvert 10 \rangle \Bigr)} {\sqrt{2}}$
+- ```PrepareQubit(pauliAxis, qubit)```- Transforma o estado do Qubit da seguinte forma:
+    - Se $\lvert 0 \rangle$, então o qubit é preparado no eigenstate +1 do operador Pauli informado;
+    - Se o estado do qubit for diferente de $\lvert 0 \rangle$, então o qubit é preparado no equivalente ao estado $\lvert 1 \rangle$ de acordo com o eixo, ou seja:
+        - PauliX - $H(qubit)$
+        - PauliY - $HS(qubit)$
+        - PauliZ - $I(qubit)$
+- ```CCNOT(controlQ1, controlQ2, targetQ)``` -  Aplica uma negação controlada (```CNOT```) em cenários com 3 qubits usando 2 qubits como controle.
 
 ## Gates
 
