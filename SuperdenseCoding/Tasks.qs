@@ -46,8 +46,8 @@ namespace Quantum.Kata.SuperdenseCoding {
     // Input: Two qubits, each in the |0⟩ state.
     // Goal:  Create a Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2) on these qubits.
     operation CreateEntangledPair (q1 : Qubit, q2 : Qubit) : Unit is Adj {
-
-        // ...
+        H(q1);
+        CNOT(q1, q2);
     }
     
     
@@ -68,9 +68,12 @@ namespace Quantum.Kata.SuperdenseCoding {
         // [1; 1]:    |Ψ⁻⟩ = (|01⟩ - |10⟩) / sqrt(2)
 
         if (message::Bit1) { // accesses the item 'Bit1' of 'message'
-            // ...
+            Z(qAlice);
         }
-        // ...
+
+        if (message::Bit2) {
+            X(qAlice);
+        }
     }
     
     
@@ -83,8 +86,9 @@ namespace Quantum.Kata.SuperdenseCoding {
     // The state of the qubits in the end of the operation should be |00⟩.
     // You can create an instance of ProtocolMessage as ProtocolMessage(bit1value, bit2value).
     operation DecodeMessageFromQubits (qAlice : Qubit, qBob : Qubit) : ProtocolMessage {
+        Adjoint CreateEntangledPair(qAlice, qBob);
 
-        fail ("Task 3 not implemented");
+        return ProtocolMessage(MResetZ(qAlice) == One, MResetZ(qBob) == One);
     }
     
     
@@ -96,8 +100,11 @@ namespace Quantum.Kata.SuperdenseCoding {
     // and decode the two classical bits from the state of the pair.
     // Return the result of decoding. 
     operation SuperdenseCodingProtocol (message : ProtocolMessage) : ProtocolMessage {
-                
-        fail ("Task 4 not implemented");
+        using((q1,q2) = (Qubit(), Qubit())) {
+            CreateEntangledPair(q1, q2);
+            EncodeMessageInQubit(q1, message);
+            return DecodeMessageFromQubits(q1, q2);
+        }
     }
     
 }

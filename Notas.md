@@ -21,6 +21,8 @@
         - PauliY - $HS(qubit)$
         - PauliZ - $I(qubit)$
 - ```CCNOT(controlQ1, controlQ2, targetQ)``` -  Aplica uma negação controlada (```CNOT```) em cenários com 3 qubits usando 2 qubits como controle.
+- ```MResetZ(Qubit)```- Mede um qubit na base informada e faz reset para $\lvert 0 \rangle$. Existem variações para outros eixos: ```MResetX(Qubit)``` e ```MResetY(Qubit)```.
+
 
 ## Gates
 
@@ -90,6 +92,14 @@ $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$
 - No primeiro estado temos uma superposição $\lvert++\rangle$ e $\lvert--\rangle$ que pertence ao estado +1 do eigenspace do operador $X \otimes X$;
 - O segundo estado é uma superposição $\lvert +- \rangle$ e $\lvert -+ \rangle$ que pertence ao  eigenspace -1 do mesmo operador;
 
+### Superdense Coding
+#### Tarefa 3
+
+- Após reaplicarmos o entrelaçamento entre os qubits de Alice e Bob, a medição de ambos os qubits poderá apresentar os seguintes resultados:
+    - $\lvert \phi^+\rangle = \frac {\big(\lvert 00 \rangle + \lvert 11 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 00 \rangle$
+    - $\lvert \psi^+\rangle = \frac {\big(\lvert 01 \rangle + \lvert 10 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 01 \rangle$
+    - $\lvert \phi^-\rangle = \frac {\big(\lvert 00 \rangle + \lvert 11 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 10 \rangle$
+    - $\lvert \psi^-\rangle = \frac {\big(\lvert 01 \rangle + \lvert 10 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 11 \rangle$
 ## Links
 [API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
 
