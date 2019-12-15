@@ -3,6 +3,7 @@
 
 namespace Quantum.Kata.DeutschJozsaAlgorithm {
     
+    open Microsoft.Quantum.Arrays;
     open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
@@ -58,7 +59,7 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         // Since f(x) = 1 for all values of x, |y ⊕ f(x)⟩ = |y ⊕ 1⟩ = |NOT y⟩.
         // This means that the operation needs to flip qubit y (i.e. transform |0⟩ to |1⟩ and vice versa).
 
-        // ...
+        X(y);
     }
     
     
@@ -73,7 +74,8 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         // You don't need to modify it. Feel free to remove it, this won't cause your code to fail.
         EqualityFactB(0 <= k and k < Length(x), true, "k should be between 0 and N-1, inclusive");
 
-        // ...
+        // Entrelaça o qubit desejado com o resultado da função
+        CNOT(x[k], y);
     }
     
     
@@ -84,8 +86,9 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     // Goal: transform state |x, y⟩ into state |x, y ⊕ f(x)⟩ (⊕ is addition modulo 2).
     operation Oracle_OddNumberOfOnes (x : Qubit[], y : Qubit) : Unit {
         // Hint: f(x) can be represented as x_0 ⊕ x_1 ⊕ ... ⊕ x_(N-1)
-
-        // ...
+        for (q in x) {
+            CNOT(q,y);
+        }
     }
     
     
@@ -103,7 +106,11 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         // You don't need to modify it. Feel free to remove it, this won't cause your code to fail.
         EqualityFactI(Length(x), Length(r), "Arrays should have the same length");
 
-        // ...
+        for (i in IndexRange(x)) {
+            if (r[i] == 1) {
+                CNOT(x[i], y);
+            }
+        }
     }
     
     
@@ -119,7 +126,15 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         // You don't need to modify it. Feel free to remove it, this won't cause your code to fail.
         EqualityFactI(Length(x), Length(r), "Arrays should have the same length");
 
-        // ...
+        for (i in IndexRange(x)) {
+            if (r[i] == 1) {
+                CNOT(x[i], y);
+            } else {
+                X(x[i]);
+                CNOT(x[i], y);
+                X(x[i]);
+            }
+        }
     }
     
     
@@ -140,12 +155,29 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
 
         // Hint: the first part of the function is the same as in task 1.4
 
-        // ...
+        for (q in x) {
+            CNOT(q, y);
+        }
 
         // Hint: you can use Controlled functor to perform multicontrolled gates
         // (gates with multiple control qubits).
 
-        // ...
+        // Verifica prefixo para usar como não multicontrolado
+        // true se correponde para o controle com 1, false se corresponder ao controle em 0.
+        for (i in 0 .. P-1) {
+            if (prefix[i] == 0) {
+                X(x[i]);
+            }
+        }
+
+        Controlled X(x[0 .. P-1], y);
+
+        // Desfaz alterações no input
+        for (i in 0 .. P-1) {
+            if (prefix[i] == 0) {
+                X(x[i]);
+            }
+        }
     }
     
     
@@ -161,7 +193,9 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
 
         // Hint: represent f(x) in terms of AND and ⊕ operations
 
-        // ...
+        CCNOT(x[0], x[1], y);
+        CCNOT(x[0], x[2], y);
+        CCNOT(x[1], x[2], y);
     }
     
     

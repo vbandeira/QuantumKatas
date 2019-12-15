@@ -95,11 +95,24 @@ $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$
 ### Superdense Coding
 #### Tarefa 3
 
-- Após reaplicarmos o entrelaçamento entre os qubits de Alice e Bob, a medição de ambos os qubits poderá apresentar os seguintes resultados:
+- Após reaplicarmos o entrelaçamento (desfazer) entre os qubits de Alice e Bob, a medição de ambos os qubits poderá apresentar os seguintes resultados:
     - $\lvert \phi^+\rangle = \frac {\big(\lvert 00 \rangle + \lvert 11 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 00 \rangle$
     - $\lvert \psi^+\rangle = \frac {\big(\lvert 01 \rangle + \lvert 10 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 01 \rangle$
     - $\lvert \phi^-\rangle = \frac {\big(\lvert 00 \rangle + \lvert 11 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 10 \rangle$
     - $\lvert \psi^-\rangle = \frac {\big(\lvert 01 \rangle + \lvert 10 \rangle \big)} {\sqrt 2} \longrightarrow \lvert 11 \rangle$
+
+### Deutsch-Jozsa Algorithm
+
+#### Tarefa 1.3
+- Retornamos o resultado ao entrelaçar o qubit desejado (indicado por ```k```) com o resultado ```y```.
+
+#### Tarefa 1.4
+- Ao aplicacarmos o ```CNOT```(não controlado), naturalmente temos o comportamento desejado: 1 se tivermos uma quantidade ímpar de qubits em $\lvert 1 \rangle$ e 0 se houver um número par.
+
+#### Tarefa 1.8
+- Podemos definir da seguinte forma:
+    $f(x) = \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big)$
+
 ## Links
 [API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
 
