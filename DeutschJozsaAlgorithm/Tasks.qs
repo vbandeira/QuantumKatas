@@ -213,7 +213,9 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     //      2) create |-⟩ state (|-⟩ = (|0⟩ - |1⟩) / sqrt(2)) on answer register
     operation BV_StatePrep (query : Qubit[], answer : Qubit) : Unit
     is Adj {
-            // ...
+        ApplyToEachA(H, query);
+        X(answer);
+        H(answer);
     }
     
     
@@ -233,13 +235,22 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     // Quantum computing allows to perform this task in just one call to the oracle; try to implement this algorithm.
     operation BV_Algorithm (N : Int, Uf : ((Qubit[], Qubit) => Unit)) : Int[] {
         
-        // Declare an Int array in which the result will be stored;
-        // the variable has to be mutable to allow updating it.
-        mutable r = new Int[N];
-        
-        // ...
-
-        return r;
+        using ((x, y) = (Qubit[N], Qubit())) {
+            BV_StatePrep_Reference(x, y);
+            Uf(x, y);
+            ApplyToEach(H, x);
+            
+            mutable r = new Int[N];
+            for (i in 0 .. N - 1) {
+                if (M(x[i]) != Zero) {
+                    set r w/= i <- 1;
+                }
+            }
+            
+            ResetAll(x);
+            Reset(y);
+            return r;
+        }
     }
     
     
@@ -296,7 +307,11 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         // it can be expressed as running Bernstein-Vazirani algorithm
         // and then post-processing the return value classically.
         
-        // ...
+        let r = BV_Algorithm(N, Uf);
+
+        for (i in 0 .. N - 1) {
+            set isConstantFunction = isConstantFunction and r[i] == 0;
+        }
 
         return isConstantFunction;
     }
@@ -332,16 +347,27 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     // Output:
     //      A bit vector r which generates the same oracle as the one you are given
     operation Noname_Algorithm (N : Int, Uf : ((Qubit[], Qubit) => Unit)) : Int[] {
-        
-        // Hint: The bit vector r does not need to be the same as the one used by the oracle,
-        // it just needs to produce equivalent results.
-        
-        // Declare an Int array in which the result will be stored;
-        // the variable has to be mutable to allow updating it.
-        mutable r = new Int[N];
-        
-        // ...
-        return r;
+
+        using ((x,y) = (Qubit[N], Qubit())) {
+            Uf(x,y);
+
+            if (N % 2 == 1) {
+                X(y);
+            }
+            
+            // Declare an Int array in which the result will be stored;
+            // the variable has to be mutable to allow updating it.
+            mutable r = new Int[N];
+            
+            let m = M(y);
+            if (m == One) {
+                set r w/=0 <- 1;
+            }
+
+            ResetAll(x);
+            Reset(y);
+            return r;
+        }
     }
     
 }

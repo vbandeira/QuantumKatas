@@ -113,6 +113,29 @@ $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$
 - Podemos definir da seguinte forma:
     $f(x) = \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big)$
 
+#### Tarefa 2.2
+- Passo a passo:
+    1. Aloca N qubits para o input e um qubit para o output;
+    1. Prepara os qubits no estado correto;
+    1. Aplica a função oráculo
+    1. Aplica Hadamard a cada qubit do registro de input;
+    1. Mede todos os qubits do registro de input, convertendo para Int;
+    1. Reset dos qubits e retorno da função
+
+#### Tarefa 4.1
+- Passo a passo:
+    1. Aplica o oráculo aos qubits no estado 0;
+    1. Remove o N da expressão: 
+        
+        $f(x) = \sum_i \Big(r_i + x_i + \big(1 - r_i \big) \big(1 - x_i \big) \Big)$
+
+        $f(x) = 2 \sum_i r_i x_i + \sum_i r_i + \sum_i x_i + N$
+
+        $f(x) = \sum_i r_i + N$
+    1. Com isso temos $y = \sum_i r_i$
+    1. Declara o vetor com o resultado e mede o registro de output
+    1. Reset dos qubits e retorno de resultado
+
 ## Links
 [API Reference](https://docs.microsoft.com/en-us/qsharp/api/qsharp/microsoft.quantum.bitwise?view=qsharp-preview)
 
