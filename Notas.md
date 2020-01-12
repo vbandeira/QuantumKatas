@@ -113,7 +113,7 @@ $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$
 - Podemos definir da seguinte forma:
     $f(x) = \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big) \ \oplus \ \big(x_0 \ AND \ x_1 \big)$
 
-#### Tarefa 2.2
+#### Tarefa 2.2 (Bernstein-Vazirani)
 - Passo a passo:
     1. Aloca N qubits para o input e um qubit para o output;
     1. Prepara os qubits no estado correto;
